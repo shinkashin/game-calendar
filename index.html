@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>新游监控日历</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+  background: #0d1117; color: #c9d1d9;
+  padding: 16px 24px 40px; min-width: 1350px;
+}
+.month-nav {
+  position: sticky; top: 0; background: #0d1117;
+  padding: 10px 0 14px; border-bottom: 1px solid #30363d;
+  z-index: 100; display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.month-nav a {
+  color: #8b949e; text-decoration: none; padding: 5px 14px;
+  border-radius: 6px; background: #161b22; font-size: 13px; font-weight: 500;
+  transition: all 0.15s; border: 1px solid #21262d; cursor: pointer;
+}
+.month-nav a:hover, .month-nav a.active {
+  background: #1f6feb; color: #fff; border-color: #1f6feb;
+}
+.month-section { margin-bottom: 40px; }
+.month-header {
+  font-size: 22px; font-weight: 700; color: #e6edf3;
+  margin-bottom: 14px; padding-left: 4px; display: flex; align-items: center; gap: 10px;
+}
+.month-header .year-tag {
+  font-size: 13px; font-weight: 500; color: #8b949e; background: #21262d;
+  padding: 2px 8px; border-radius: 4px;
+}
+.calendar-table {
+  width: 100%; border-collapse: collapse; table-layout: fixed;
+  border-radius: 10px; overflow: hidden; border: 1px solid #30363d;
+}
+.calendar-table thead th {
+  background: #161b22; color: #8b949e; font-size: 13px; font-weight: 600;
+  padding: 8px 4px; text-align: center; border-bottom: 1px solid #30363d; width: 15%;
+}
+.calendar-table thead th.weekend {
+  background: #1a1f26; color: #f0883e; width: 8.5%;
+}
+.calendar-table thead th.pending-header {
+  width: 130px; background: #1a1f26; color: #8b949e;
+}
+.calendar-table tbody td {
+  border: 1px solid #21262d; vertical-align: top; padding: 4px;
+  height: auto; min-height: 50px; background: #0d1117;
+}
+.calendar-table tbody td.weekend-cell { background: #11161d; }
+.calendar-table tbody td.pending-cell {
+  background: #11161d; border-left: 2px solid #30363d;
+}
+.date-num {
+  font-size: 12px; font-weight: 600; color: #6e7681;
+  margin-bottom: 3px; text-align: right; padding-right: 4px;
+}
+.date-num.weekend { color: #f0883e; }
+
+.game-card {
+  border-radius: 5px; padding: 6px 7px; margin-bottom: 5px;
+  cursor: pointer; transition: all 0.12s; position: relative;
+  font-size: 12px; line-height: 1.5;
+}
+.game-card:hover {
+  transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.35); filter: brightness(1.15);
+}
+.game-card .game-name {
+  font-weight: 600; color: #e6edf3; font-size: 12px; line-height: 1.4; word-break: break-all;
+}
+.game-card .game-company {
+  font-size: 10px; color: #8b949e; margin-top: 2px; line-height: 1.3; word-break: break-all;
+}
+.game-card .meta-row {
+  display: flex; align-items: center; gap: 4px; margin-top: 4px; flex-wrap: wrap;
+}
+.game-card .game-type {
+  font-size: 10px; color: #a0a8b0; background: rgba(255,255,255,0.08);
+  padding: 1px 5px; border-radius: 3px;
+}
+.game-card .event-badge {
+  font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600;
+}
+.game-card .channels {
+  font-size: 9px; color: #8b949e; margin-top: 2px;
+}
+.game-card .key-star {
+  position: absolute; top: 2px; right: 3px; color: #f0883e; font-size: 10px;
+}
+.game-note-tag {
+  font-size: 9px; color: #ff7b72; background: rgba(255,123,114,0.15);
+  display: inline-block; padding: 1px 4px; border-radius: 2px; margin-top: 3px;
+  border: 1px solid rgba(255,123,114,0.3);
+}
+.bg-launch { background: rgba(231,76,60,0.18); border-left: 2px solid #e74c3c; }
+.bg-test { background: rgba(243,156,18,0.18); border-left: 2px solid #f39c12; }
+.bg-update { background: rgba(52,152,219,0.15); border-left: 2px solid #3498db; }
+.bg-tbd { background: rgba(139,148,158,0.12); border-left: 2px solid #8b949e; }
+.badge-launch { background: rgba(231,76,60,0.25); color: #e74c3c; }
+.badge-test { background: rgba(243,156,18,0.25); color: #f39c12; }
+.badge-update { background: rgba(52,152,219,0.15); color: #3498db; }
+.badge-tbd { background: rgba(139,148,158,0.15); color: #8b949e; }
+
+.update-section {
+  margin-top: 16px; background: #161b22; border: 1px solid #30363d;
+  border-radius: 10px; padding: 14px 18px;
+}
+.update-section h3 {
+  font-size: 14px; color: #e6edf3; margin-bottom: 10px; font-weight: 600;
+}
+.update-table { width: 100%; border-collapse: collapse; }
+.update-table th {
+  text-align: left; font-size: 11px; color: #8b949e; font-weight: 500;
+  padding: 5px 8px; border-bottom: 1px solid #30363d;
+}
+.update-table td {
+  padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #21262d;
+}
+.update-table td:first-child { width: 70px; color: #d29922; font-weight: 600; }
+
+.note-section {
+  margin-top: 14px; font-size: 11px; color: #ffffff; line-height: 1.8;
+  background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 8px;
+}
+
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-box {
+  background: #161b22; border: 1px solid #30363d; border-radius: 14px;
+  width: 480px; max-height: 85vh; overflow-y: auto; padding: 24px;
+  position: relative; transform: scale(0.95); transition: transform 0.2s;
+}
+.modal-overlay.active .modal-box { transform: scale(1); }
+.modal-close {
+  position: absolute; top: 14px; right: 16px; font-size: 22px;
+  color: #8b949e; cursor: pointer; background: none; border: none;
+}
+.modal-close:hover { color: #fff; }
+.modal-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+}
+.modal-header .modal-icon {
+  width: 44px; height: 44px; border-radius: 10px; background: #21262d;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.modal-header .modal-title { font-size: 18px; font-weight: 700; color: #e6edf3; }
+.modal-header .modal-sub { font-size: 12px; color: #8b949e; margin-top: 2px; }
+.modal-row {
+  display: flex; justify-content: space-between; padding: 8px 0;
+  border-bottom: 1px solid #21262d; font-size: 13px;
+}
+.modal-row:last-child { border-bottom: none; }
+.modal-row .label { color: #8b949e; }
+.modal-row .value { color: #e6edf3; font-weight: 500; }
+.modal-link {
+  display: inline-block; margin-top: 16px; padding: 8px 16px;
+  background: #1f6feb; color: #fff; text-decoration: none;
+  border-radius: 6px; font-size: 13px; font-weight: 500; transition: background 0.15s;
+}
+.modal-link:hover { background: #388bfd; }
+
+.reserve-chart {
+  margin-top: 16px; padding: 12px; background: #0d1117;
+  border-radius: 8px; border: 1px solid #21262d;
+}
+.reserve-chart h4 {
+  font-size: 12px; color: #8b949e; margin-bottom: 8px; font-weight: 500;
+}
+.reserve-chart .reserve-num {
+  font-size: 24px; font-weight: 700; color: #3fb950; margin-bottom: 10px;
+}
+.reserve-chart .reserve-trend {
+  font-size: 11px; color: #8b949e; margin-bottom: 4px;
+}
+
+#svg-tooltip {
+  position: absolute; background: #21262d; border: 1px solid #30363d;
+  border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #e6edf3;
+  pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 2000; white-space: nowrap;
+}
+#svg-tooltip.show { opacity: 1; }
+
+.legend {
+  display: flex; gap: 14px; margin-top: 10px; font-size: 11px; color: #8b949e; flex-wrap: wrap;
+}
+.legend span { display: flex; align-items: center; gap: 4px; }
+.legend .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+.top-legend {
+  display: flex; gap: 18px; margin-bottom: 16px; font-size: 12px; color: #c9d1d9;
+  justify-content: flex-end; padding: 0 4px;
+}
+.top-legend .lg { display: flex; align-items: center; gap: 5px; }
+.top-legend .lg-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="month-nav" id="monthNav"></div>
+
+<div class="top-legend">
+  <span class="lg"><span class="lg-dot" style="background:#e74c3c;"></span> 首发上线</span>
+  <span class="lg"><span class="lg-dot" style="background:#f39c12;"></span> 测试 / 删档</span>
+  <span class="lg"><span class="lg-dot" style="background:#3498db;"></span> 大版本更新</span>
+  <span class="lg"><span class="lg-dot" style="background:#8b949e;"></span> 首曝 / 预约</span>
+  <span class="lg"><span style="color:#f1c40f;">&#9733;</span> 重点关注</span>
+</div>
+
+<div id="calendarContainer"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<div id="svg-tooltip"></div>
+
+<script>
+const calendarData = {
+  "2026-07": {
+    "year": 2026,
+    "month": 7,
+    "games": [
+      {
+        "name": "时空猎人·觉醒",
+        "company": "江西贪玩",
+        "type": "横版格斗/动作",
+        "channels": [
+          "TapTap",
+          "iOS",
+          "PC"
+        ],
+        "event": "launch",
+        "date": "2026-07-02",
+        "isKey": false,
+        "taptapId": "739697",
+        "reserveNum": "7.7万",
+        "reserveHistory": []
+      },
+      {
+        "name": "谁淹了我的世界",
+        "company": "长沙时迹网络",
+        "type": "生存/搜打撤",
+        "channels": ["TapTap"],
+        "event": "test",
+        "date": "2026-07-02",
+        "isKey": false,
+        "taptapId": "802351",
+        "reserveNum": "2.2万",
+        "reserveHistory": []
+      },
+      {
+        "name": "决策三国",
+        "company": "北京国技传世/Nerial",
+        "type": "策略卡牌",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "launch",
+        "date": "2026-07-03",
+        "isKey": false,
+        "taptapId": "235979",
+        "reserveNum": "1万",
+        "reserveHistory": []
+      },
+      {
+        "name": "云海寻仙记",
+        "company": "上海至彩互娱",
+        "type": "修仙RPG/放置",
+        "channels": ["TapTap"],
+        "event": "test",
+        "date": "2026-07-03",
+        "isKey": false,
+        "taptapId": "739285",
+        "reserveNum": "2.2万",
+        "reserveHistory": []
+      },
+      {
+        "name": "遗忘之海",
+        "company": "网易Joker工作室",
+        "type": "海洋开放世界RPG",
+        "channels": [
+          "全渠道"
+        ],
+        "event": "launch",
+        "date": "2026-07-23",
+        "isKey": true,
+        "taptapId": "755604",
+        "reserveNum": "142万",
+        "note": "移动端首发，PC端7/9已公测",
+        "reserveHistory": [
+          {
+            "date": "7/3",
+            "value": 1380000
+          },
+          {
+            "date": "7/4",
+            "value": 1385000
+          },
+          {
+            "date": "7/5",
+            "value": 1390000
+          },
+          {
+            "date": "7/6",
+            "value": 1395000
+          },
+          {
+            "date": "7/7",
+            "value": 1400000
+          },
+          {
+            "date": "7/9",
+            "value": 1420000
+          }
+        ]
+      },
+      {
+        "name": "镇魂街王者归来",
+        "company": "上海游碧曜",
+        "type": "动作",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "test",
+        "date": "2026-07-09",
+        "isKey": false,
+        "taptapId": "792753",
+        "reserveNum": "13万",
+        "reserveHistory": [],
+        "note": "集结测试7/9-7/16，删档计费"
+      },
+      {
+        "name": "失控进化",
+        "company": "腾讯",
+        "type": "生存/开放世界",
+        "channels": [
+          "TapTap",
+          "PC"
+        ],
+        "event": "launch",
+        "date": "2026-07-09",
+        "isKey": true,
+        "taptapId": "733908",
+        "reserveNum": "344万",
+        "reserveHistory": [
+          {
+            "date": "7/3",
+            "value": 3280000
+          },
+          {
+            "date": "7/4",
+            "value": 3290000
+          },
+          {
+            "date": "7/5",
+            "value": 3300000
+          },
+          {
+            "date": "7/6",
+            "value": 3310000
+          },
+          {
+            "date": "7/7",
+            "value": 3320000
+          },
+          {
+            "date": "7/9",
+            "value": 3440000
+          }
+        ]
+      },
+      {
+        "name": "遗忘之海",
+        "company": "网易Joker工作室",
+        "type": "海洋开放世界RPG",
+        "channels": ["PC"],
+        "event": "launch",
+        "date": "2026-07-09",
+        "isKey": true,
+        "taptapId": "755604",
+        "reserveNum": "142万",
+        "reserveHistory": [],
+        "note": "PC端今日首发，移动端7/23上线"
+      },
+      {
+        "name": "三国志：王道天下",
+        "company": "哔哩哔哩游戏/光荣特库摩正版授权",
+        "type": "SLG/三国",
+        "channels": ["TapTap", "哔哩哔哩"],
+        "event": "test",
+        "date": "2026-07-09",
+        "isKey": false,
+        "taptapId": "824115",
+        "reserveNum": "7.5万",
+        "reserveHistory": []
+      },
+      {
+        "name": "世界之光",
+        "company": "成都世界之光",
+        "type": "沙盒+建造+萌宠",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "launch",
+        "date": "2026-07-15",
+        "isKey": false,
+        "taptapId": "534979",
+        "reserveNum": "3.1万",
+        "reserveHistory": []
+      },
+      {
+        "name": "三国：战策长河",
+        "company": "儒意景秀",
+        "type": "SLG/三国",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "test",
+        "date": "2026-07-15",
+        "isKey": false,
+        "taptapId": "845732",
+        "reserveNum": "2226",
+        "reserveHistory": [],
+        "note": "踏浪首测，7月15日10:00开启"
+      },
+      {
+        "name": "纸嫁衣9罗浮梦",
+        "company": "成都惊帆/纸嫁衣工作室",
+        "type": "叙事解谜",
+        "channels": [
+          "TapTap",
+          "iOS"
+        ],
+        "event": "launch",
+        "date": "2026-07-16",
+        "isKey": false,
+        "taptapId": "845749",
+        "reserveNum": "29万",
+        "reserveHistory": [
+          {
+            "date": "7/3",
+            "value": 270000
+          },
+          {
+            "date": "7/4",
+            "value": 275000
+          },
+          {
+            "date": "7/5",
+            "value": 280000
+          },
+          {
+            "date": "7/6",
+            "value": 285000
+          },
+          {
+            "date": "7/7",
+            "value": 290000
+          },
+          {
+            "date": "7/9",
+            "value": 295000
+          }
+        ]
+      },
+      {
+        "name": "命运代码：侵入",
+        "company": "上海逸派玩",
+        "type": "叙事解谜",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "launch",
+        "date": "2026-07-25",
+        "isKey": false,
+        "taptapId": "863880",
+        "reserveNum": "1.9万",
+        "note": "TapTap独家",
+        "reserveHistory": [
+          {
+            "date": "7/3",
+            "value": 16000
+          },
+          {
+            "date": "7/4",
+            "value": 16500
+          },
+          {
+            "date": "7/5",
+            "value": 17000
+          },
+          {
+            "date": "7/6",
+            "value": 18000
+          },
+          {
+            "date": "7/7",
+            "value": 19000
+          },
+          {
+            "date": "7/9",
+            "value": 20000
+          }
+        ]
+      },
+      {
+        "name": "黄油猫",
+        "company": "机核/Team Woll",
+        "type": "解谜冒险",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "launch",
+        "date": "2026-07-30",
+        "isKey": false,
+        "taptapId": "708247",
+        "reserveNum": "12万",
+        "reserveHistory": [],
+        "note": "TapTap独家"
+      }
+    ],
+    "updates": [
+      {
+        "date": "2026-07-02",
+        "game": "忍者必须死3",
+        "content": "新版本更新"
+      },
+      {
+        "date": "2026-07-02",
+        "game": "逆战：未来",
+        "content": "新版本更新"
+      },
+      {
+        "date": "2026-07-03",
+        "game": "暗区突围",
+        "content": "新版本更新"
+      },
+      {
+        "date": "2026-07-03",
+        "game": "一念逍遥",
+        "content": "新版本更新"
+      },
+      {
+        "date": "2026-07-02",
+        "game": "晶核",
+        "content": "新版本更新"
+      },
+      {
+        "date": "2026-07-02",
+        "game": "我的休闲时光",
+        "content": "新版本更新"
+      },
+      {
+        "date": "2026-07-10",
+        "game": "鸣潮",
+        "content": "3.5版本「遗音扶剑 荡梦而歌」"
+      },
+      {
+        "date": "2026-07-10",
+        "game": "燕云十六声",
+        "content": "与逃离塔科夫联动"
+      },
+      {
+        "date": "2026-07-11",
+        "game": "心动小镇",
+        "content": "寻鲸季"
+      },
+      {
+        "date": "2026-07-13",
+        "game": "元气骑士",
+        "content": "8.4.0 机甲觉醒，骑士防线"
+      },
+      {
+        "date": "2026-07-15",
+        "game": "崩坏：星穹铁道",
+        "content": "4.4版本「鸣笛于归寂之时」"
+      },
+      {
+        "date": "2026-07-16",
+        "game": "洛克王国：世界",
+        "content": "S3赛季「铅字幻梦」"
+      },
+      {
+        "date": "2026-07-17",
+        "game": "火炬之光：无限",
+        "content": "SS13：守夜人"
+      },
+      {
+        "date": "2026-07-24",
+        "game": "植物大战僵尸2",
+        "content": "「小小向日葵」超级装扮限时免费领"
+      }
+    ],
+    "pending": [
+      {
+        "name": "怪物猎人：旅人",
+        "company": "卡普空/腾讯天美",
+        "type": "动作",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "test",
+        "isKey": true,
+        "taptapId": "243984",
+        "reserveNum": "49万",
+        "note": "测试招募已开启，测试时间待公布"
+      },
+      {
+        "name": "蓝色星原：旅谣",
+        "company": "蛮啾网络",
+        "type": "星宠大世界RPG",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "test",
+        "isKey": true,
+        "taptapId": "593829",
+        "reserveNum": "196万",
+        "note": "测试招募中，测试时间未公布"
+      },
+      {
+        "name": "诡秘之主：愚者",
+        "company": "祖龙科技",
+        "type": "卡牌/二次元RPG",
+        "channels": ["TapTap", "PC"],
+        "event": "test",
+        "isKey": true,
+        "taptapId": "865791",
+        "reserveNum": "36万",
+        "note": "测试招募已开启，测试时间待公布"
+      },
+      {
+        "name": "霓虹深渊2",
+        "company": "Veewo Games",
+        "type": "Roguelike/动作",
+        "channels": ["TapTap", "Steam"],
+        "event": "test",
+        "isKey": false,
+        "taptapId": "751308",
+        "reserveNum": "4.7万",
+        "note": "测试招募已开启，上线Q4"
+      },
+      {
+        "name": "元夜十二谈",
+        "company": "游卡网络",
+        "type": "新怪谈策略RPG",
+        "channels": ["TapTap"],
+        "event": "test",
+        "isKey": false,
+        "taptapId": "808743",
+        "reserveNum": "15万",
+        "note": "测试招募已开启，测试时间待公布"
+      },
+      {
+        "name": "白银之城",
+        "company": "乐元素",
+        "type": "二次元/侦探ARPG/开放世界",
+        "channels": ["TapTap", "iOS", "PC"],
+        "event": "test",
+        "isKey": true,
+        "taptapId": "754910",
+        "reserveNum": "124万",
+        "note": "二分法测试招募中(至7/16)，测试时间待公布"
+      }
+    ]
+  },
+  "2026-08": {
+    "year": 2026,
+    "month": 8,
+    "games": [
+      {
+        "name": "诡影藏锋",
+        "company": "网易",
+        "type": "搜打撤/中式恐怖/动作",
+        "channels": ["TapTap", "iOS", "PC"],
+        "event": "test",
+        "date": "2026-08-07",
+        "isKey": true,
+        "taptapId": "874444",
+        "reserveNum": "4.6万",
+        "reserveHistory": [],
+        "note": "藏锋测试8/7-8/10，限量删档，测试热度榜#1"
+      }
+    ],
+    "updates": [],
+    "pending": []
+  },
+  "2025-04": {
+    "year": 2025,
+    "month": 4,
+    "games": [
+      {
+        "name": "幻想少女公会",
+        "company": "待确认",
+        "type": "二次元",
+        "channels": [
+          "全渠道"
+        ],
+        "event": "launch",
+        "date": "2025-04-02",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "功夫熊猫：神龙大侠",
+        "company": "待确认",
+        "type": "数值卡牌+模拟经营",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "launch",
+        "date": "2025-04-03",
+        "isKey": true,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "三国杀武将觉醒",
+        "company": "游卡",
+        "type": "桌游卡牌",
+        "channels": [
+          "全渠道"
+        ],
+        "event": "launch",
+        "date": "2025-04-09",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "百将牌",
+        "company": "待确认",
+        "type": "桌游卡牌",
+        "channels": [
+          "TapTap",
+          "iOS"
+        ],
+        "event": "launch",
+        "date": "2025-04-10",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "王者荣耀世界",
+        "company": "腾讯天美",
+        "type": "开放世界",
+        "channels": [
+          "全渠道"
+        ],
+        "event": "launch",
+        "date": "2025-04-15",
+        "isKey": true,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "龙符：天祭",
+        "company": "待确认",
+        "type": "策略卡牌",
+        "channels": [
+          "TapTap",
+          "iOS"
+        ],
+        "event": "launch",
+        "date": "2025-04-15",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "小花仙",
+        "company": "待确认",
+        "type": "换装养成",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "launch",
+        "date": "2025-04-17",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "三国：天下归心",
+        "company": "待确认",
+        "type": "SLG",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "test",
+        "date": "2025-04-18",
+        "isKey": true,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "大航海时代：传说",
+        "company": "待确认",
+        "type": "航海模拟经营",
+        "channels": [
+          "TapTap",
+          "iOS"
+        ],
+        "event": "launch",
+        "date": "2025-04-22",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "异环",
+        "company": "Hotta Studio",
+        "type": "开放世界",
+        "channels": [
+          "TapTap"
+        ],
+        "event": "test",
+        "date": "2025-04-23",
+        "isKey": true,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "乱涂彩世界",
+        "company": "待确认",
+        "type": "休闲益智",
+        "channels": [
+          "全渠道"
+        ],
+        "event": "launch",
+        "date": "2025-04-24",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "小鸡守卫",
+        "company": "待确认",
+        "type": "塔防",
+        "channels": [
+          "全渠道"
+        ],
+        "event": "launch",
+        "date": "2025-04-25",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      },
+      {
+        "name": "百将牌",
+        "company": "待确认",
+        "type": "桌游卡牌",
+        "channels": [
+          "TapTap",
+          "iOS"
+        ],
+        "event": "launch",
+        "date": "2025-04-29",
+        "isKey": false,
+        "taptapId": "",
+        "reserveNum": "",
+        "reserveHistory": []
+      }
+    ],
+    "updates": [],
+    "pending": []
+  }
+};
+
+const eventNames = { launch: '首发', test: '测试', update: '版本', tbd: '待定' };
+const eventClasses = { launch: 'bg-launch', test: 'bg-test', update: 'bg-update', tbd: 'bg-tbd' };
+const badgeClasses = { launch: 'badge-launch', test: 'badge-test', update: 'badge-update', tbd: 'badge-tbd' };
+const weekNames = ['周一','周二','周三','周四','周五','周六','周日'];
+
+function getDaysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+function getFirstDayOfMonth(year, month) {
+  let d = new Date(year, month - 1, 1).getDay();
+  return d === 0 ? 6 : d - 1;
+}
+
+function renderGameCard(g) {
+  const evt = eventNames[g.event] || g.event;
+  const bgClass = eventClasses[g.event] || 'bg-launch';
+  const badgeClass = badgeClasses[g.event] || 'badge-launch';
+  const channels = Array.isArray(g.channels) ? g.channels.join('、') : g.channels;
+  const star = g.isKey ? '<span class="key-star">&#9733;</span>' : '';
+  const company = g.company ? '<div class="game-company">' + g.company + '</div>' : '';
+  const taptapId = g.taptapId ? 'https://www.taptap.cn/app/' + g.taptapId : '';
+  const note = g.note ? '<div class="game-note-tag">' + g.note + '</div>' : '';
+  return '<div class="game-card ' + bgClass + '" onclick="openModal(' + "'" + taptapId + "'" + ',' + "'" + g.name.replace(/'/g, "\'") + "'" + ',' + "'" + (g.company||'').replace(/'/g, "\'") + "'" + ',' + "'" + g.type.replace(/'/g, "\'") + "'" + ',' + "'" + evt + "'" + ',' + "'" + channels.replace(/'/g, "\'") + "'" + ',' + g.isKey + ',' + "'" + (g.reserveNum||'').replace(/'/g, "\'") + "'" + ',' + JSON.stringify(g.reserveHistory||[]).replace(/"/g, '&quot;') + ',' + "'" + (g.note||'').replace(/'/g, "\'") + "'" + ')">' +
+    star + '<div class="game-name">' + g.name + '</div>' + company +
+    '<div class="meta-row"><span class="game-type">' + g.type + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
+}
+
+function renderMonth(key, data) {
+  let html = '<div class="month-section" id="' + key + '">';
+  html += '<div class="month-header">' + data.month + '月 <span class="year-tag">' + data.year + '年</span></div>';
+  html += '<table class="calendar-table"><thead><tr>';
+  for (let i = 0; i < 7; i++) {
+    const wk = i >= 5 ? 'weekend' : '';
+    html += '<th class="' + wk + '">' + weekNames[i] + '</th>';
+  }
+  html += '<th class="pending-header">待定/其他</th></tr></thead><tbody>';
+  const days = getDaysInMonth(data.year, data.month);
+  const firstDay = getFirstDayOfMonth(data.year, data.month);
+  let dayGames = {};
+  data.games.forEach(g => { dayGames[g.date] = dayGames[g.date] || []; dayGames[g.date].push(g); });
+  let day = 1;
+  const totalRows = Math.ceil((days + firstDay) / 7);
+  let rowNum = 0;
+  while (day <= days) {
+    html += '<tr>';
+    for (let i = 0; i < 7; i++) {
+      if (rowNum === 0 && i < firstDay) {
+        html += '<td class="weekend-cell"></td>';
+        continue;
+      }
+      if (day > days) {
+        html += '<td class="weekend-cell"></td>';
+        continue;
+      }
+      const wk = i >= 5 ? 'weekend' : '';
+      const cellClass = i >= 5 ? 'weekend-cell' : '';
+      const dateKey = data.year + '-' + String(data.month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+      const games = dayGames[dateKey] || [];
+      html += '<td class="' + cellClass + '"><div class="date-num ' + wk + '">' + day + '</div>';
+      games.forEach(g => { html += renderGameCard(g); });
+      html += '</td>';
+      day++;
+    }
+    if (rowNum === 0) {
+      html += '<td class="pending-cell" rowspan="' + totalRows + '">';
+      if (data.pending && data.pending.length) {
+      data.pending.forEach(g => {
+        const evt = eventNames[g.event] || g.event;
+        const bgClass = eventClasses[g.event] || 'bg-tbd';
+        const badgeClass = badgeClasses[g.event] || 'badge-tbd';
+        const channels = Array.isArray(g.channels) ? g.channels.join('、') : g.channels;
+        const star = g.isKey ? '<span class="key-star">&#9733;</span>' : '';
+        const company = g.company ? '<div class="game-company">' + g.company + '</div>' : '';
+        const note = g.note ? '<div class="game-note-tag">' + g.note + '</div>' : '';
+        const taptapId = g.taptapId ? 'https://www.taptap.cn/app/' + g.taptapId : '';
+        html += '<div class="game-card ' + bgClass + '" onclick="openModal(' + "'" + taptapId + "'" + ',' + "'" + g.name.replace(/'/g, "\'") + "'" + ',' + "'" + (g.company||'').replace(/'/g, "\'") + "'" + ',' + "'" + g.type.replace(/'/g, "\'") + "'" + ',' + "'" + evt + "'" + ',' + "'" + channels.replace(/'/g, "\'") + "'" + ',' + g.isKey + ',' + "'" + (g.reserveNum||'').replace(/'/g, "\'") + "'" + ',' + JSON.stringify(g.reserveHistory||[]).replace(/"/g, '&quot;') + ',' + "'" + (g.note||'').replace(/'/g, "\'") + "'" + ')">' +
+          star + '<div class="game-name">' + g.name + '</div>' + company +
+          '<div class="meta-row"><span class="game-type">' + g.type + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
+      });
+    } else {
+      html += '<div style="color:#6e7681;font-size:11px;text-align:center;padding:20px 0;">暂无</div>';
+    }
+    html += '</td>';
+    }
+    html += '</tr>';
+    rowNum++;
+  }
+  html += '</tbody></table>';
+  if (data.updates && data.updates.length) {
+    html += '<div class="update-section"><h3>大版本更新</h3><table class="update-table"><tr><th>日期</th><th>游戏</th><th>更新内容</th></tr>';
+    data.updates.forEach(u => {
+      html += '<tr><td>' + u.date.slice(5) + '</td><td>' + u.game + '</td><td>' + u.content + '</td></tr>';
+    });
+    html += '</table></div>';
+  }
+  html += '<div class="note-section">' +
+    '<strong style="color:#e6edf3;">图例说明：</strong>' +
+    '<span class="dot" style="background:#e74c3c;"></span> 首发上线 ' +
+    '<span class="dot" style="background:#f39c12;"></span> 测试 / 删档 ' +
+    '<span class="dot" style="background:#3498db;"></span> 大版本更新 ' +
+    '<span class="dot" style="background:#8b949e;"></span> 首曝 / 预约 ' +
+    '<span style="color:#f1c40f;margin-left:4px;">&#9733;</span> 重点游戏<br>' +
+    '数据来源：TapTap、OPPO游戏中心、各渠道后台。更新时间：每日自动更新。<br>' +
+    '本表为内部监控用途，如有变动请以各渠道官方公告为准。' +
+    '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderNav() {
+  const keys = Object.keys(calendarData).sort().reverse();
+  let html = '';
+  keys.forEach(k => {
+    const d = calendarData[k];
+    html += '<a href="#' + k + '" data-month="' + k + '">' + d.year + '年' + d.month + '月</a>';
+  });
+  document.getElementById('monthNav').innerHTML = html;
+}
+
+function renderAll() {
+  const keys = Object.keys(calendarData).sort().reverse();
+  let html = '';
+  keys.forEach(k => { html += renderMonth(k, calendarData[k]); });
+  document.getElementById('calendarContainer').innerHTML = html;
+}
+
+function openModal(taptapUrl, name, company, type, eventType, channels, isKey, reserveNum, history, note) {
+  if (typeof history === 'string') { try { history = JSON.parse(history); } catch(e) { history = []; } }
+  const overlay = document.getElementById('modalOverlay');
+  const content = document.getElementById('modalContent');
+  let star = isKey ? ' <span style="color:#f0883e;">&#9733;</span>' : '';
+  let html = '<div class="modal-header">' +
+    '<div class="modal-icon">&#127918;</div>' +
+    '<div><div class="modal-title">' + name + star + '</div>' +
+    '<div class="modal-sub">' + (company || '厂商待确认') + '</div></div></div>';
+  html += '<div class="modal-row"><span class="label">游戏类型</span><span class="value">' + type + '</span></div>';
+  html += '<div class="modal-row"><span class="label">事件类型</span><span class="value">' + eventType + '</span></div>';
+  if (note) {
+    html += '<div class="modal-row"><span class="label">特殊标记</span><span class="value" style="color:#ff7b72;">' + note + '</span></div>';
+  }
+  if (reserveNum && reserveNum !== '—') {
+    html += '<div class="reserve-chart">';
+    html += '<h4>TapTap 预约数</h4>';
+    html += '<div class="reserve-num">' + reserveNum + '</div>';
+    if (history && history.length > 1) {
+      html += '<div class="reserve-trend">近5日趋势</div>';
+      html += generateTrendChart(history);
+    }
+    html += '</div>';
+  } else if (reserveNum === '—') {
+    html += '<div class="reserve-chart"><h4>TapTap 预约数</h4><div style="font-size:14px;color:#8b949e;">已上线或数据未公开</div></div>';
+  }
+  if (taptapUrl) {
+    html += '<a href="' + taptapUrl + '" target="_blank" class="modal-link">在 TapTap 查看</a>';
+  }
+  content.innerHTML = html;
+  overlay.classList.add('active');
+}
+
+function generateTrendChart(data) {
+  const w = 400, h = 120, pad = 20;
+  const minVal = Math.min(...data.map(d => d.value));
+  const maxVal = Math.max(...data.map(d => d.value));
+  const range = maxVal - minVal || 1;
+  const points = data.map((d, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2);
+    const y = h - pad - ((d.value - minVal) / range) * (h - pad * 2);
+    return { x, y, value: d.value, date: d.date };
+  });
+  let path = 'M' + points[0].x + ' ' + points[0].y;
+  for (let i = 1; i < points.length; i++) path += ' L' + points[i].x + ' ' + points[i].y;
+  let svg = '<svg width="100%" height="140" viewBox="0 0 ' + w + ' ' + h + '" style="overflow:visible;">';
+  svg += '<defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.3"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></linearGradient></defs>';
+  let areaPath = path + ' L' + points[points.length-1].x + ' ' + (h-pad) + ' L' + points[0].x + ' ' + (h-pad) + ' Z';
+  svg += '<path d="' + areaPath + '" fill="url(#grad)"/>';
+  svg += '<path d="' + path + '" fill="none" stroke="#3fb950" stroke-width="2"/>';
+  points.forEach((p, i) => {
+    svg += '<circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="#3fb950" stroke="#0d1117" stroke-width="2" ' +
+      'onmouseenter="showTooltip(evt, \'' + p.date + ': ' + p.value.toLocaleString() + '人\')" ' +
+      'onmouseleave="hideTooltip()" style="cursor:pointer;"/>';
+  });
+  svg += '</svg>';
+  return svg;
+}
+
+function showTooltip(evt, text) {
+  const tooltip = document.getElementById('svg-tooltip');
+  tooltip.textContent = text;
+  tooltip.classList.add('show');
+  const rect = evt.target.getBoundingClientRect();
+  tooltip.style.left = (rect.left + window.scrollX - 10) + 'px';
+  tooltip.style.top = (rect.top + window.scrollY - 40) + 'px';
+}
+function hideTooltip() {
+  document.getElementById('svg-tooltip').classList.remove('show');
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+renderNav();
+renderAll();
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      document.querySelectorAll('.month-nav a').forEach(a => a.classList.remove('active'));
+      const link = document.querySelector('.month-nav a[href="#' + entry.target.id + '"]');
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+
+document.querySelectorAll('.month-section').forEach(sec => observer.observe(sec));
+</script>
+
+</body>
+</html>
