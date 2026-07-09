@@ -1019,7 +1019,7 @@ function renderAll() {
 }
 
 function openModal(taptapUrl, name, company, type, eventType, channels, isKey, reserveNum, history, note) {
-  if (typeof history === 'string') { try { history = JSON.parse(history); } catch(e) { history = []; } }
+  if (typeof history === 'string') { history = history.replace(/&quot;/g, '"'); try { history = JSON.parse(history); } catch(e) { history = []; } }
   const overlay = document.getElementById('modalOverlay');
   const content = document.getElementById('modalContent');
   let star = isKey ? ' <span style="color:#f0883e;">&#9733;</span>' : '';
@@ -1032,13 +1032,23 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
   if (note) {
     html += '<div class="modal-row"><span class="label">特殊标记</span><span class="value" style="color:#ff7b72;">' + note + '</span></div>';
   }
+  let reserveCount = reserveNum;
   if (reserveNum && reserveNum !== '—') {
     html += '<div class="reserve-chart">';
-    html += '<h4>TapTap 预约数</h4>';
-    html += '<div class="reserve-num">' + reserveNum + '</div>';
+    html += '<h4>TapTap 预约趋势</h4>';
     if (history && history.length > 1) {
-      html += '<div class="reserve-trend">近5日趋势</div>';
+      var firstVal = history[0].value;
+      var lastVal = history[history.length-1].value;
+      var diff = lastVal - firstVal;
+      var diffStr = '';
+      if (diff > 0) diffStr = '<span style="color:#3fb950;font-size:12px;"> ▲+' + diff.toLocaleString() + '</span>';
+      else if (diff < 0) diffStr = '<span style="color:#f85149;font-size:12px;"> ▼' + diff.toLocaleString() + '</span>';
+      html += '<div class="reserve-num">' + reserveCount + diffStr + '</div>';
+      html += '<div class="reserve-trend">' + history.length + '日趋势（' + history[0].date + ' → ' + history[history.length-1].date + '）</div>';
       html += generateTrendChart(history);
+    } else {
+      html += '<div class="reserve-num">' + reserveCount + '</div>';
+      html += '<div class="reserve-trend">趋势数据将在后续每日更新中积累</div>';
     }
     html += '</div>';
   } else if (reserveNum === '—') {
@@ -1052,6 +1062,7 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
 }
 
 function generateTrendChart(data) {
+  var gradId = 'grad_' + Math.random().toString(36).slice(2,8);
   const w = 400, h = 120, pad = 20;
   const minVal = Math.min(...data.map(d => d.value));
   const maxVal = Math.max(...data.map(d => d.value));
@@ -1064,13 +1075,16 @@ function generateTrendChart(data) {
   let path = 'M' + points[0].x + ' ' + points[0].y;
   for (let i = 1; i < points.length; i++) path += ' L' + points[i].x + ' ' + points[i].y;
   let svg = '<svg width="100%" height="140" viewBox="0 0 ' + w + ' ' + h + '" style="overflow:visible;">';
-  svg += '<defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.3"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></linearGradient></defs>';
+  svg += '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.3"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></linearGradient></defs>';
   let areaPath = path + ' L' + points[points.length-1].x + ' ' + (h-pad) + ' L' + points[0].x + ' ' + (h-pad) + ' Z';
-  svg += '<path d="' + areaPath + '" fill="url(#grad)"/>';
+  svg += '<path d="' + areaPath + '" fill="url(#' + gradId + ')"/>';
   svg += '<path d="' + path + '" fill="none" stroke="#3fb950" stroke-width="2"/>';
   points.forEach((p, i) => {
+    var dparts = p.date.split('/');
+    var dlabel = dparts[0] + '月' + dparts[1] + '日';
+    var vlabel = p.value >= 10000 ? (p.value/10000).toFixed(1) + '万' : p.value.toLocaleString();
     svg += '<circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="#3fb950" stroke="#0d1117" stroke-width="2" ' +
-      'onmouseenter="showTooltip(evt, \'' + p.date + ': ' + p.value.toLocaleString() + '人\')" ' +
+      'onmouseenter="showTooltip(evt, \'' + dlabel + ': ' + vlabel + '\')" ' +
       'onmouseleave="hideTooltip()" style="cursor:pointer;"/>';
   });
   svg += '</svg>';
