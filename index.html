@@ -250,7 +250,8 @@ const calendarData = {
             "date": "7/9",
             "value": 77000
           }
-        ]
+        ],
+        "downloadHistory": []
       },
       {
         "name": "谁淹了我的世界",
@@ -288,7 +289,8 @@ const calendarData = {
             "date": "7/9",
             "value": 10000
           }
-        ]
+        ],
+        "downloadHistory": []
       },
       {
         "name": "云海寻仙记",
@@ -351,7 +353,8 @@ const calendarData = {
             "date": "7/9",
             "value": 1420000
           }
-        ]
+        ],
+        "downloadHistory": []
       },
       {
         "name": "镇魂街王者归来",
@@ -415,7 +418,8 @@ const calendarData = {
             "date": "7/9",
             "value": 3440000
           }
-        ]
+        ],
+        "downloadHistory": []
       },
       {
         "name": "遗忘之海",
@@ -435,7 +439,8 @@ const calendarData = {
             "value": 1420000
           }
         ],
-        "note": "PC端今日首发，移动端7/23上线"
+        "note": "PC端今日首发，移动端7/23上线",
+        "downloadHistory": []
       },
       {
         "name": "三国志：王道天下",
@@ -474,7 +479,8 @@ const calendarData = {
             "date": "7/9",
             "value": 31000
           }
-        ]
+        ],
+        "downloadHistory": []
       },
       {
         "name": "三国：战策长河",
@@ -538,7 +544,8 @@ const calendarData = {
             "date": "7/9",
             "value": 295000
           }
-        ]
+        ],
+        "downloadHistory": []
       },
       {
         "name": "命运代码：侵入",
@@ -582,7 +589,8 @@ const calendarData = {
             "date": "7/9",
             "value": 20000
           }
-        ]
+        ],
+        "downloadHistory": []
       },
       {
         "name": "黄油猫",
@@ -602,7 +610,8 @@ const calendarData = {
             "value": 120000
           }
         ],
-        "note": "TapTap独家"
+        "note": "TapTap独家",
+        "downloadHistory": []
       }
     ],
     "updates": [
@@ -844,7 +853,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "功夫熊猫：神龙大侠",
@@ -858,7 +868,8 @@ const calendarData = {
         "isKey": true,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "三国杀武将觉醒",
@@ -872,7 +883,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "百将牌",
@@ -887,7 +899,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "王者荣耀世界",
@@ -901,7 +914,8 @@ const calendarData = {
         "isKey": true,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "龙符：天祭",
@@ -916,7 +930,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "小花仙",
@@ -930,7 +945,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "三国：天下归心",
@@ -959,7 +975,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "异环",
@@ -987,7 +1004,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "小鸡守卫",
@@ -1001,7 +1019,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       },
       {
         "name": "百将牌",
@@ -1016,7 +1035,8 @@ const calendarData = {
         "isKey": false,
         "taptapId": "",
         "reserveNum": "",
-        "reserveHistory": []
+        "reserveHistory": [],
+        "downloadHistory": []
       }
     ],
     "updates": [],
@@ -1047,7 +1067,7 @@ function renderGameCard(g) {
   const company = g.company ? '<div class="game-company">' + g.company + '</div>' : '';
   const taptapId = g.taptapId ? 'https://www.taptap.cn/app/' + g.taptapId : '';
   const note = g.note ? '<div class="game-note-tag">' + g.note + '</div>' : '';
-  return '<div class="game-card ' + bgClass + '" onclick="openModal(' + "'" + taptapId + "'" + ',' + "'" + g.name.replace(/'/g, "\'") + "'" + ',' + "'" + (g.company||'').replace(/'/g, "\'") + "'" + ',' + "'" + g.type.replace(/'/g, "\'") + "'" + ',' + "'" + evt + "'" + ',' + "'" + channels.replace(/'/g, "\'") + "'" + ',' + g.isKey + ',' + "'" + (g.reserveNum||'').replace(/'/g, "\'") + "'" + ',' + JSON.stringify(g.reserveHistory||[]).replace(/"/g, '&quot;') + ',' + "'" + (g.note||'').replace(/'/g, "\'") + "'" + ')">' +
+  return '<div class="game-card ' + bgClass + '" onclick="openModal(' + "'" + taptapId + "'" + ',' + "'" + g.name.replace(/'/g, "\'") + "'" + ',' + "'" + (g.company||'').replace(/'/g, "\'") + "'" + ',' + "'" + g.type.replace(/'/g, "\'") + "'" + ',' + "'" + evt + "'" + ',' + "'" + channels.replace(/'/g, "\'") + "'" + ',' + g.isKey + ',' + "'" + (g.reserveNum||'').replace(/'/g, "\'") + "'" + ',' + JSON.stringify(g.reserveHistory||[]).replace(/"/g, '&quot;') + ',' + "'" + (g.note||'').replace(/'/g, "\'") + "'" + ',JSON.stringify(g.downloadHistory||[]).replace(/"/g, \'&quot;\')' + ',' + "'" + (g.date||'').replace(/'/g, "\'") + "'" + ')">' +
     star + '<div class="game-name">' + g.name + '</div>' + company +
     '<div class="meta-row"><span class="game-type">' + g.type + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
 }
@@ -1100,7 +1120,7 @@ function renderMonth(key, data) {
         const company = g.company ? '<div class="game-company">' + g.company + '</div>' : '';
         const note = g.note ? '<div class="game-note-tag">' + g.note + '</div>' : '';
         const taptapId = g.taptapId ? 'https://www.taptap.cn/app/' + g.taptapId : '';
-        html += '<div class="game-card ' + bgClass + '" onclick="openModal(' + "'" + taptapId + "'" + ',' + "'" + g.name.replace(/'/g, "\'") + "'" + ',' + "'" + (g.company||'').replace(/'/g, "\'") + "'" + ',' + "'" + g.type.replace(/'/g, "\'") + "'" + ',' + "'" + evt + "'" + ',' + "'" + channels.replace(/'/g, "\'") + "'" + ',' + g.isKey + ',' + "'" + (g.reserveNum||'').replace(/'/g, "\'") + "'" + ',' + JSON.stringify(g.reserveHistory||[]).replace(/"/g, '&quot;') + ',' + "'" + (g.note||'').replace(/'/g, "\'") + "'" + ')">' +
+        html += '<div class="game-card ' + bgClass + '" onclick="openModal(' + "'" + taptapId + "'" + ',' + "'" + g.name.replace(/'/g, "\'") + "'" + ',' + "'" + (g.company||'').replace(/'/g, "\'") + "'" + ',' + "'" + g.type.replace(/'/g, "\'") + "'" + ',' + "'" + evt + "'" + ',' + "'" + channels.replace(/'/g, "\'") + "'" + ',' + g.isKey + ',' + "'" + (g.reserveNum||'').replace(/'/g, "\'") + "'" + ',' + JSON.stringify(g.reserveHistory||[]).replace(/"/g, '&quot;') + ',' + "'" + (g.note||'').replace(/'/g, "\'") + "'" + ',JSON.stringify(g.downloadHistory||[]).replace(/"/g, \'&quot;\')' + ',' + "'" + (g.date||'').replace(/'/g, "\'") + "'" + ')">' +
           star + '<div class="game-name">' + g.name + '</div>' + company +
           '<div class="meta-row"><span class="game-type">' + g.type + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
       });
@@ -1151,8 +1171,9 @@ function renderAll() {
   document.getElementById('calendarContainer').innerHTML = html;
 }
 
-function openModal(taptapUrl, name, company, type, eventType, channels, isKey, reserveNum, history, note) {
+function openModal(taptapUrl, name, company, type, eventType, channels, isKey, reserveNum, history, note, downloadHistory, gameDate) {
   if (typeof history === 'string') { history = history.replace(/&quot;/g, '"'); try { history = JSON.parse(history); } catch(e) { history = []; } }
+  if (typeof downloadHistory === 'string') { downloadHistory = downloadHistory.replace(/&quot;/g, '"'); try { downloadHistory = JSON.parse(downloadHistory); } catch(e) { downloadHistory = []; } }
   const overlay = document.getElementById('modalOverlay');
   const content = document.getElementById('modalContent');
   let star = isKey ? ' <span style="color:#f0883e;">&#9733;</span>' : '';
@@ -1168,21 +1189,50 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
   let reserveCount = reserveNum;
   if (reserveNum && reserveNum !== '—') {
     html += '<div class="reserve-chart">';
-    html += '<h4>TapTap 预约趋势</h4>';
-    if (history && history.length > 1) {
-      var firstVal = history[0].value;
-      var lastVal = history[history.length-1].value;
-      var diff = lastVal - firstVal;
-      var diffStr = '';
-      if (diff > 0) diffStr = '<span style="color:#3fb950;font-size:12px;"> ▲+' + diff.toLocaleString() + '</span>';
-      else if (diff < 0) diffStr = '<span style="color:#f85149;font-size:12px;"> ▼' + diff.toLocaleString() + '</span>';
-      html += '<div class="reserve-num">' + reserveCount + diffStr + '</div>';
+    
+    // If launched and has download history, show download trend
+    if (downloadHistory && downloadHistory.length > 0) {
+      html += '<h4>下载趋势（首发后）</h4>';
+      var dFirst = downloadHistory[0].value;
+      var dLast = downloadHistory[downloadHistory.length-1].value;
+      var dDiff = dLast - dFirst;
+      var dDiffStr = '';
+      if (dDiff > 0) dDiffStr = '<span style="color:#3fb950;font-size:12px;"> &#9650;+' + dDiff.toLocaleString() + '</span>';
+      else if (dDiff < 0) dDiffStr = '<span style="color:#f85149;font-size:12px;"> &#9660;' + dDiff.toLocaleString() + '</span>';
+      html += '<div class="reserve-num">' + dLast.toLocaleString() + ' 下载' + dDiffStr + '</div>';
+      html += '<div class="reserve-trend">' + downloadHistory.length + '日趋势（' + downloadHistory[0].date + ' → ' + downloadHistory[downloadHistory.length-1].date + '）</div>';
+      html += generateTrendChart(downloadHistory, '#58a6ff');
+    }
+
+    // Always show reservation trend if history exists (keep old data)
+    if (history && history.length > 0) {
+      if (downloadHistory && downloadHistory.length > 0) {
+        html += '<div style="margin-top:16px;border-top:1px solid #21262d;padding-top:12px;">';
+        html += '<h4 style="margin-top:0;">预约趋势（首发前）</h4>';
+      } else {
+        html += '<h4>TapTap 预约趋势</h4>';
+      }
+      html += '<div class="reserve-num">' + reserveCount + '</div>';
+      if (history.length > 1) {
+        var firstVal = history[0].value;
+        var lastVal = history[history.length-1].value;
+        var diff = lastVal - firstVal;
+        var diffStr = '';
+        if (diff > 0) diffStr = '<span style="color:#3fb950;font-size:12px;"> &#9650;+' + diff.toLocaleString() + '</span>';
+        else if (diff < 0) diffStr = '<span style="color:#f85149;font-size:12px;"> &#9660;' + diff.toLocaleString() + '</span>';
+        html += '<div style="font-size:12px;margin-top:2px;">' + diffStr + '</div>';
+      }
       html += '<div class="reserve-trend">' + history.length + '日趋势（' + history[0].date + ' → ' + history[history.length-1].date + '）</div>';
-      html += generateTrendChart(history);
-    } else {
+      html += generateTrendChart(history, '#3fb950');
+      if (downloadHistory && downloadHistory.length > 0) {
+        html += '</div>';
+      }
+    } else if (!downloadHistory || downloadHistory.length === 0) {
+      html += '<h4>TapTap 预约趋势</h4>';
       html += '<div class="reserve-num">' + reserveCount + '</div>';
       html += '<div class="reserve-trend">趋势数据将在后续每日更新中积累</div>';
     }
+
     html += '</div>';
   } else if (reserveNum === '—') {
     html += '<div class="reserve-chart"><h4>TapTap 预约数</h4><div style="font-size:14px;color:#8b949e;">已上线或数据未公开</div></div>';
@@ -1194,7 +1244,8 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
   overlay.classList.add('active');
 }
 
-function generateTrendChart(data) {
+function generateTrendChart(data, color) {
+  color = color || '#3fb950';
   var gradId = 'grad_' + Math.random().toString(36).slice(2,8);
   const w = 400, h = 120, pad = 20;
   const minVal = Math.min(...data.map(d => d.value));
@@ -1208,15 +1259,15 @@ function generateTrendChart(data) {
   let path = 'M' + points[0].x + ' ' + points[0].y;
   for (let i = 1; i < points.length; i++) path += ' L' + points[i].x + ' ' + points[i].y;
   let svg = '<svg width="100%" height="140" viewBox="0 0 ' + w + ' ' + h + '" style="overflow:visible;">';
-  svg += '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.3"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></linearGradient></defs>';
+  svg += '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + color + '" stop-opacity="0.3"/><stop offset="100%" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>';
   let areaPath = path + ' L' + points[points.length-1].x + ' ' + (h-pad) + ' L' + points[0].x + ' ' + (h-pad) + ' Z';
   svg += '<path d="' + areaPath + '" fill="url(#' + gradId + ')"/>';
-  svg += '<path d="' + path + '" fill="none" stroke="#3fb950" stroke-width="2"/>';
+  svg += '<path d="' + path + '" fill="none" stroke="' + color + '" stroke-width="2"/>';
   points.forEach((p, i) => {
     var dparts = p.date.split('/');
     var dlabel = dparts[0] + '月' + dparts[1] + '日';
     var vlabel = p.value >= 10000 ? (p.value/10000).toFixed(1) + '万' : p.value.toLocaleString();
-    svg += '<circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="#3fb950" stroke="#0d1117" stroke-width="2" ' +
+    svg += '<circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="' + color + '" stroke="#0d1117" stroke-width="2" ' +
       'onmouseenter="showTooltip(evt, \'' + dlabel + ': ' + vlabel + '\')" ' +
       'onmouseleave="hideTooltip()" style="cursor:pointer;"/>';
   });
