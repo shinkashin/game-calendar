@@ -1492,10 +1492,11 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
       var dFirst = downloadHistory[0].value;
       var dLast = downloadHistory[downloadHistory.length-1].value;
       var dDiff = dLast - dFirst;
+      var dLastStr = dLast >= 10000 ? (dLast/10000).toFixed(dLast % 10000 === 0 ? 0 : 1) + '万' : dLast.toLocaleString();
       var dDiffStr = '';
-      if (dDiff > 0) dDiffStr = '<span style="color:#3fb950;font-size:12px;"> &#9650;+' + dDiff.toLocaleString() + '</span>';
-      else if (dDiff < 0) dDiffStr = '<span style="color:#f85149;font-size:12px;"> &#9660;' + dDiff.toLocaleString() + '</span>';
-      html += '<div class="reserve-num">' + dLast.toLocaleString() + ' 下载' + dDiffStr + '</div>';
+      if (dDiff > 0) dDiffStr = '<span style="color:#16a34a;font-size:12px;"> &#9650;+' + dDiff.toLocaleString() + '</span>';
+      else if (dDiff < 0) dDiffStr = '<span style="color:#dc2626;font-size:12px;"> &#9660;' + dDiff.toLocaleString() + '</span>';
+      html += '<div class="reserve-num">' + dLastStr + ' 下载' + dDiffStr + '</div>';
       html += '<div class="reserve-trend">' + downloadHistory.length + '日趋势（' + downloadHistory[0].date + ' → ' + downloadHistory[downloadHistory.length-1].date + '）</div>';
       html += generateTrendChart(downloadHistory, '#58a6ff');
     }
