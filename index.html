@@ -1774,7 +1774,7 @@ function renderMonth(key, data) {
   html += '</tbody></table>';
   if (data.updates && data.updates.length) {
     html += '<div class="update-section"><h3>大版本更新</h3><table class="update-table"><tr><th>日期</th><th>游戏</th><th>更新内容</th></tr>';
-    data.updates.forEach(u => {
+    data.updates.slice().sort((a, b) => a.date.localeCompare(b.date)).forEach(u => {
       html += '<tr><td>' + u.date.slice(5) + '</td><td>' + u.game + '</td><td>' + u.content + '</td></tr>';
     });
     html += '</table></div>';
