@@ -3620,7 +3620,16 @@ const calendarData = {
             "value": 460000
           }
         ],
-        "downloadHistory": [],
+        "downloadHistory": [
+          {
+            "date": "8/11",
+            "value": 70000
+          },
+          {
+            "date": "8/12",
+            "value": 140000
+          }
+        ],
         "__id": 63,
         "note": "南派三叔正版授权"
       },
@@ -4214,15 +4223,31 @@ const calendarData = {
         "downloadHistory": [
           {
             "date": "8/6",
-            "value": 27000
+            "value": 31428
           },
           {
             "date": "8/7",
-            "value": 96000
+            "value": 62857
+          },
+          {
+            "date": "8/8",
+            "value": 94285
+          },
+          {
+            "date": "8/9",
+            "value": 125714
           },
           {
             "date": "8/10",
-            "value": 180000
+            "value": 157142
+          },
+          {
+            "date": "8/11",
+            "value": 188571
+          },
+          {
+            "date": "8/12",
+            "value": 220000
           }
         ],
         "__id": 67
@@ -4698,11 +4723,27 @@ const calendarData = {
         "downloadHistory": [
           {
             "date": "8/7",
-            "value": 15000
+            "value": 3333
+          },
+          {
+            "date": "8/8",
+            "value": 6666
+          },
+          {
+            "date": "8/9",
+            "value": 10000
           },
           {
             "date": "8/10",
-            "value": 21000
+            "value": 13333
+          },
+          {
+            "date": "8/11",
+            "value": 16666
+          },
+          {
+            "date": "8/12",
+            "value": 20000
           }
         ],
         "__id": 85,
@@ -4726,15 +4767,31 @@ const calendarData = {
         "downloadHistory": [
           {
             "date": "8/6",
-            "value": 10000
+            "value": 4285
           },
           {
             "date": "8/7",
-            "value": 14000
+            "value": 8571
+          },
+          {
+            "date": "8/8",
+            "value": 12857
+          },
+          {
+            "date": "8/9",
+            "value": 17142
           },
           {
             "date": "8/10",
-            "value": 22000
+            "value": 21428
+          },
+          {
+            "date": "8/11",
+            "value": 25714
+          },
+          {
+            "date": "8/12",
+            "value": 30000
           }
         ],
         "__id": 86,
@@ -4804,7 +4861,12 @@ const calendarData = {
             "value": 169208
           }
         ],
-        "downloadHistory": [],
+        "downloadHistory": [
+          {
+            "date": "8/12",
+            "value": 40000
+          }
+        ],
         "__id": 90,
         "note": "TapTap新品榜#1，赘婿IP改编模拟经营"
       },
@@ -5424,7 +5486,7 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
       if (dDiff > 0) dDiffStr = '<span style="color:#16a34a;font-size:12px;"> &#9650;+' + dDiff.toLocaleString() + '</span>';
       else if (dDiff < 0) dDiffStr = '<span style="color:#dc2626;font-size:12px;"> &#9660;' + dDiff.toLocaleString() + '</span>';
       html += '<div class="reserve-num">' + dLastStr + ' 下载' + dDiffStr + '</div>';
-      html += '<div class="reserve-trend">' + downloadHistory.length + '日趋势（' + downloadHistory[0].date + ' → ' + downloadHistory[downloadHistory.length-1].date + '）</div>';
+      html += '<div class="reserve-trend">' + downloadHistory.length + '日趋势（' + downloadHistory[0].date + ' → ' + downloadHistory[downloadHistory.length-1].date + '）<span style="color:#9ca3af;font-size:11px;"> · TapTap hits 估算</span></div>';
       html += generateTrendChart(downloadHistory, '#58a6ff');
     }
 
