@@ -1414,10 +1414,6 @@ const calendarData = {
         ],
         "downloadHistory": [
           {
-            "date": "7/16",
-            "value": 0
-          },
-          {
             "date": "7/17",
             "value": 342494
           },
@@ -3624,16 +3620,7 @@ const calendarData = {
             "value": 460000
           }
         ],
-        "downloadHistory": [
-          {
-            "date": "8/11",
-            "value": 0
-          },
-          {
-            "date": "8/12",
-            "value": 0
-          }
-        ],
+        "downloadHistory": [],
         "__id": 63,
         "note": "南派三叔正版授权"
       },
@@ -4236,14 +4223,6 @@ const calendarData = {
           {
             "date": "8/10",
             "value": 180000
-          },
-          {
-            "date": "8/11",
-            "value": 0
-          },
-          {
-            "date": "8/12",
-            "value": 0
           }
         ],
         "__id": 67
@@ -4392,10 +4371,6 @@ const calendarData = {
           {
             "date": "8/10",
             "value": 5396
-          },
-          {
-            "date": "8/11",
-            "value": 0
           }
         ],
         "__id": 77
@@ -4728,14 +4703,6 @@ const calendarData = {
           {
             "date": "8/10",
             "value": 21000
-          },
-          {
-            "date": "8/11",
-            "value": 0
-          },
-          {
-            "date": "8/12",
-            "value": 0
           }
         ],
         "__id": 85,
@@ -4768,14 +4735,6 @@ const calendarData = {
           {
             "date": "8/10",
             "value": 22000
-          },
-          {
-            "date": "8/11",
-            "value": 0
-          },
-          {
-            "date": "8/12",
-            "value": 0
           }
         ],
         "__id": 86,
@@ -4845,12 +4804,7 @@ const calendarData = {
             "value": 169208
           }
         ],
-        "downloadHistory": [
-          {
-            "date": "8/12",
-            "value": 0
-          }
-        ],
+        "downloadHistory": [],
         "__id": 90,
         "note": "TapTap新品榜#1，赘婿IP改编模拟经营"
       },
@@ -5465,6 +5419,7 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
       var dLast = downloadHistory[downloadHistory.length-1].value;
       var dDiff = dLast - dFirst;
       var dLastStr = dLast >= 10000 ? (dLast/10000).toFixed(dLast % 10000 === 0 ? 0 : 1) + '万' : dLast.toLocaleString();
+      if (dLast === 0) dLastStr = '—';
       var dDiffStr = '';
       if (dDiff > 0) dDiffStr = '<span style="color:#16a34a;font-size:12px;"> &#9650;+' + dDiff.toLocaleString() + '</span>';
       else if (dDiff < 0) dDiffStr = '<span style="color:#dc2626;font-size:12px;"> &#9660;' + dDiff.toLocaleString() + '</span>';
