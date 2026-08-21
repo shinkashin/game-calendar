@@ -7011,6 +7011,22 @@ function renderAll() {
   document.getElementById('calendarContainer').innerHTML = html;
 }
 
+function formatReserve(n) {
+  if (typeof n === 'number') {
+    if (n >= 10000) { var w = n / 10000; return (w % 1 === 0 ? w.toFixed(0) : w.toFixed(1)) + '万'; }
+    return String(n);
+  }
+  if (typeof n === 'string') {
+    var s = n.trim();
+    if (/^\d+(\.\d+)?$/.test(s)) {
+      var m = parseFloat(s);
+      if (m >= 10000) { var w2 = m / 10000; return (w2 % 1 === 0 ? w2.toFixed(0) : w2.toFixed(1)) + '万'; }
+      return s;
+    }
+  }
+  return n;
+}
+
 function openModal(taptapUrl, name, company, type, eventType, channels, isKey, reserveNum, history, note, downloadHistory, gameDate) {
   if (typeof history === 'string') { history = history.replace(/&quot;/g, '"'); try { history = JSON.parse(history); } catch(e) { history = []; } }
   if (typeof downloadHistory === 'string') { downloadHistory = downloadHistory.replace(/&quot;/g, '"'); try { downloadHistory = JSON.parse(downloadHistory); } catch(e) { downloadHistory = []; } }
@@ -7026,7 +7042,7 @@ function openModal(taptapUrl, name, company, type, eventType, channels, isKey, r
   if (note) {
     html += '<div class="modal-row"><span class="label">特殊标记</span><span class="value" style="color:#ff7b72;">' + note + '</span></div>';
   }
-  let reserveCount = reserveNum;
+  let reserveCount = formatReserve(reserveNum);
   if (reserveNum && reserveNum !== '—') {
     html += '<div class="reserve-chart">';
     
