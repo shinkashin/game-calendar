@@ -6607,14 +6607,10 @@ const calendarData = {
             "value": 3750
           }
         ],
-        "tags": [
-          "MMO",
-          "回合制",
-          "角色扮演"
-        ],
         "note": "经典回合制MMO手游，无需点卡",
         "isKey": false,
-        "company": "网易游戏"
+        "company": "网易游戏",
+        "type": "MMO / 回合制 / 角色扮演"
       },
       {
         "name": "代号：梦核",
@@ -6709,12 +6705,8 @@ const calendarData = {
             "value": 44833
           }
         ],
-        "tags": [
-          "DIY",
-          "种田",
-          "休闲"
-        ],
-        "developer": "鹰目科技"
+        "company": "鹰目科技",
+        "type": "DIY / 种田 / 休闲"
       },
       {
         "__id": 115,
@@ -6731,12 +6723,8 @@ const calendarData = {
             "value": 19724
           }
         ],
-        "tags": [
-          "养成",
-          "放置",
-          "Roguelike"
-        ],
-        "developer": "剑工作室"
+        "company": "剑工作室",
+        "type": "养成 / 放置 / Roguelike"
       }
     ],
     "updates": [
@@ -6966,10 +6954,8 @@ const calendarData = {
             "value": 67476
           }
         ],
-        "tags": [
-          "策略"
-        ],
-        "developer": "魔力数娱"
+        "company": "魔力数娱",
+        "type": "策略"
       },
       {
         "__id": 112,
@@ -6984,12 +6970,8 @@ const calendarData = {
             "value": 77986
           }
         ],
-        "tags": [
-          "女性向",
-          "恋爱",
-          "休闲"
-        ],
-        "developer": "新闻消息"
+        "company": "新闻消息",
+        "type": "女性向 / 恋爱 / 休闲"
       },
       {
         "__id": 113,
@@ -7004,13 +6986,9 @@ const calendarData = {
             "value": 396807
           }
         ],
-        "tags": [
-          "国风",
-          "开放世界",
-          "修仙"
-        ],
-        "developer": "腾讯",
-        "isKey": true
+        "isKey": true,
+        "company": "腾讯",
+        "type": "国风 / 开放世界 / 修仙"
       }
     ],
     "days": 31,
@@ -7416,12 +7394,14 @@ function renderGameCard(g) {
   const badgeClass = badgeClasses[g.event] || 'badge-launch';
   const channels = Array.isArray(g.channels) ? g.channels.join('、') : g.channels;
   const star = g.isKey ? '<span class="key-star">&#9733;</span>' : '';
-  const company = g.company ? '<div class="game-company">' + g.company + '</div>' : '';
+  const comp = g.company || g.developer || '';
+  const company = comp ? '<div class="game-company">' + comp + '</div>' : '';
+  const tp = g.type || (Array.isArray(g.tags) ? g.tags.join(' / ') : (g.tags || ''));
   const taptapId = g.taptapId ? 'https://www.taptap.cn/app/' + g.taptapId : '';
   const note = g.note ? '<div class="game-note-tag">' + g.note + '</div>' : '';
   return '<div class="game-card ' + bgClass + '" onclick="openModalById(' + g.__id + ')">' +
     star + '<div class="game-name">' + g.name + '</div>' + company +
-    '<div class="meta-row"><span class="game-type">' + g.type + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
+    '<div class="meta-row"><span class="game-type">' + tp + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
 }
 
 function renderMonth(key, data) {
@@ -7469,12 +7449,14 @@ function renderMonth(key, data) {
         const badgeClass = badgeClasses[g.event] || 'badge-tbd';
         const channels = Array.isArray(g.channels) ? g.channels.join('、') : g.channels;
         const star = g.isKey ? '<span class="key-star">&#9733;</span>' : '';
-        const company = g.company ? '<div class="game-company">' + g.company + '</div>' : '';
+        const comp = g.company || g.developer || '';
+        const company = comp ? '<div class="game-company">' + comp + '</div>' : '';
+        const tp = g.type || (Array.isArray(g.tags) ? g.tags.join(' / ') : (g.tags || ''));
         const note = g.note ? '<div class="game-note-tag">' + g.note + '</div>' : '';
         const taptapId = g.taptapId ? 'https://www.taptap.cn/app/' + g.taptapId : '';
         html += '<div class="game-card ' + bgClass + '" onclick="openModalById(' + g.__id + ')">' +
           star + '<div class="game-name">' + g.name + '</div>' + company +
-          '<div class="meta-row"><span class="game-type">' + g.type + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
+          '<div class="meta-row"><span class="game-type">' + tp + '</span><span class="event-badge ' + badgeClass + '">' + evt + '</span></div>' + note + '</div>';
       });
     } else {
       html += '<div style="color:#6e7681;font-size:11px;text-align:center;padding:20px 0;">暂无</div>';
@@ -7693,7 +7675,9 @@ function openModalById(id) {
   const evt = en[g.event] || '待定';
   const url = g.taptapId ? 'https://www.taptap.cn/app/' + g.taptapId : '';
   const ch = Array.isArray(g.channels) ? g.channels.join('、') : (g.channels || '');
-  openModal(url, g.name, g.company, g.type, evt, ch,
+  const comp = g.company || g.developer || '';
+  const tp = g.type || (Array.isArray(g.tags) ? g.tags.join(' / ') : (g.tags || ''));
+  openModal(url, g.name, comp, tp, evt, ch,
     g.isKey, g.reserveNum,
     JSON.stringify(g.reserveHistory || []),
     g.note,
